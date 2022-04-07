@@ -16,6 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include, re_path
 from bank_type.views import *
+from payroll_project.views import *
+
 
 app_name = 'bank'
 urlpatterns = [
@@ -24,4 +26,7 @@ urlpatterns = [
     path('api/v1/auth/', include('djoser.urls')),
     re_path(r'^auth/', include('djoser.urls.authtoken')),
     path('api/v1/bank_type/', BankCreateView.as_view()),
+    path('api/v1/payroll_project/add_worker', Add_workerCreateView.as_view()),
+    path('api/v1/payroll_project/make', Payroll_projectCreateView.as_view()),
+
 ]

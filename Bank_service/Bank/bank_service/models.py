@@ -31,6 +31,7 @@ class Entity(models.Model):
                              on_delete=models.CASCADE, default='')
     bank_name = models.ForeignKey(
         Choose_bank, on_delete=models.CASCADE, default='')
+
     first_type = 'IO'
     sec_type = 'OOO'
     third_type = 'ZAO'
@@ -90,12 +91,10 @@ class Transaction(models.Model):
         decimal_places=2
     )
     date = models.DateTimeField(auto_now_add=True)
-
     account = models.ForeignKey(
         Account,
         on_delete=models.CASCADE
     )
-
     merchant = models.CharField(max_length=255)
 
     def __str__(self):
@@ -114,3 +113,106 @@ class Transaction(models.Model):
                 amount=amount, account=account, merchant=merchant)
 
         return account, tran
+
+
+class Transfer(models.Model):
+    amount = models.DecimalField(
+        max_digits=12,
+        decimal_places=2
+    )
+    account_sender = models.ForeignKey(
+        Account,
+        on_delete=models.CASCADE,
+        related_name='account_sender'
+    )
+    account_getter = models.ForeignKey(
+        Account,
+        on_delete=models.CASCADE,
+        related_name='account_getter'
+    )
+
+
+class Frozen_acc(models.Model):
+    account = models.ForeignKey(
+        Account,
+        on_delete=models.CASCADE,
+        related_name='frozen_account'
+    )
+
+    zero_flag = '0'
+    first_flag = '1'
+
+    FLAG_TYPE = (
+        (zero_flag, '0'),
+        (first_flag, '1'),
+    )
+
+    is_frozen_flag = models.CharField(
+        max_length=1, verbose_name='Is frozen status', choices=FLAG_TYPE
+    )
+
+    @classmethod
+    def make_frozen(cls, account, is_frozen_flag):
+        if is_frozen_flag == '0':
+            raise(ValueError('Account is not frozen now'))
+        else:
+            raise(ValueError('Account is frozen now'))
+
+
+class Accumulation(models.Model):
+    account = models.ForeignKey(
+        Account,
+        on_delete=models.CASCADE,
+        related_name='accumulated_account'
+    )
+    date = models.DateTimeField(auto_now_add=True)
+    amount = models.DecimalField(
+        decimal_places=2,
+        max_digits=10
+    )
+
+    def __str__(self):
+        return f'Accumulated account is {self.account}'
+
+
+class Creditors(models.Model):
+    user = models.ForeignKey(
+        Account,
+        on_delete=models.CASCADE,
+        related_name='credit_account'
+    )
+    bank_acc = models.ForeignKey(
+        Choose_bank,
+        on_delete=models.CASCADE,
+        related_name='bank'
+    )
+    amount = models.DecimalField(
+        decimal_places=2,
+        max_digits=10
+    )
+    
+    first_credit_time = '3 month'
+    sec_credit_time = '6 month'
+    third_credit_time = '12 month'
+    fourth_credit_time = '24 month'
+    fifth_credit_time = '> than 24 month'
+
+    CREDIT_TIME_TYPE = (
+        (first_credit_time, '3 month'),
+        (sec_credit_time, '6 month'),
+        (third_credit_time, '12 month'),
+        (fourth_credit_time, '24 month'),
+        (fifth_credit_time, '> than 24 month'),
+    )
+
+    credit_time = models.CharField(
+        max_length=20, 
+        verbose_name='Credit time', 
+        choices=CREDIT_TIME_TYPE
+    )
+
+    total_amount = models.DecimalField(
+        decimal_places=2,
+        max_digits=10, 
+        default=0
+    )

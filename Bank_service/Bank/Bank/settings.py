@@ -37,9 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_crontab',
     'rest_framework',
     'bank_service',
     'bank_type',
+    'payroll_project',
     'rest_framework.authtoken',
     'djoser',
 ]
@@ -132,3 +134,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ]
 }
+
+CRONJOBS = [
+    ('*/1 * * * *', 'Bank.cron.make_some_accumulation'),
+    ('*/1 * * * *', 'Bank.cron.print_some_hello')
+]
