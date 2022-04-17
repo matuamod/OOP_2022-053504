@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'payroll_project',
     'rest_framework.authtoken',
     'djoser',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
